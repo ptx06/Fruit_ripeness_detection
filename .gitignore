@@ -1,3 +1,4 @@
+# 基础忽略规则（YOLO11水果检测项目）
 /data/
 experiments/
 __pycache__/
@@ -9,3 +10,12 @@ __pycache__/
 .vscode/
 .idea/
 deployments/simple_api/__pycache__/
+
+# Jupyter Notebook 忽略项
+.ipynb_checkpoints/
+*.ipynb.meta
+*-checkpoint.ipynb
+.jupyter/
+nbproject/
+*.nbconvert.ipynb
+.cache/

@@ -6,6 +6,12 @@ YOLO11 训练脚本
 import argparse
 from pathlib import Path
 from ultralytics import YOLO
+import os
+import sys
+# 获取项目根目录（脚本在 scripts/ 下，根目录 = 上一级）
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# 将根目录加入Python路径，这样就能识别 src/ 模块
+sys.path.append(ROOT_DIR)
 from src.utils.config import load_config, save_config
 
 def main():
