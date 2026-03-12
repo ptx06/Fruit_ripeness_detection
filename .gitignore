@@ -1,0 +1,11 @@
+/data/
+experiments/
+__pycache__/
+*.pyc
+*.pth
+*.pt
+*.log
+.DS_Store
+.vscode/
+.idea/
+deployments/simple_api/__pycache__/

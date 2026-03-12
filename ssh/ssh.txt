@@ -1,0 +1,4 @@
+ssh -L 8000:localhost:8000 root@region-41.seetacloud.com -p 15216
+
+password:
+b5GWfENTI1gE
