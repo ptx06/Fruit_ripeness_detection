@@ -1,0 +1,5 @@
+ultralytics==8.3.0   # YOLO11核心库
+pyyaml               # 解析配置文件
+onnx                 # 模型导出
+onnxruntime          # ONNX推理
+opencv-python        # 图像处理

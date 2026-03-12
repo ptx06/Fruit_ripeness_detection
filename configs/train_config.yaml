@@ -1,0 +1,14 @@
+# 训练配置
+data: ./data/Fruit_object_detection/data.yaml   # 数据集配置文件路径
+model: ./src/models/yolo11n.pt                 # 预训练模型（YOLO11 nano版本，适合快速实验）
+epochs: 50                        # 训练轮数
+imgsz: 640                        # 输入图像尺寸
+batch: 16                         # 批次大小（根据显存调整）
+device: 0                         # GPU设备ID，-1表示CPU
+workers: 8                        # 数据加载线程数
+project: ./experiments/exp_001    # 实验保存目录
+name: train                        # 实验子目录名
+exist_ok: True                     # 允许覆盖已有目录
+pretrained: True                   # 使用预训练权重
+optimizer: auto                    # 自动选择优化器
+seed: 42                           # 随机种子
