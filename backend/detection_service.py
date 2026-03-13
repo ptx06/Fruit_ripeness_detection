@@ -9,7 +9,7 @@ from datetime import datetime
 from models import FruitDetection, DetectionResult
 
 class FruitDetectionService:
-    def __init__(self, model_path: str = "best.pt"):
+    def __init__(self, model_path: str = "./src/models/best.pt"):
         """初始化水果检测服务"""
         self.model_path = model_path
         self.model = None
