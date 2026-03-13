@@ -49,7 +49,7 @@ def start_backend():
     try:
         # 安装后端依赖
         print("📦 安装后端依赖...")
-        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "backend/requirements.txt"], 
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], 
                       check=True, capture_output=True)
         
         # 创建必要目录
