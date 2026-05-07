@@ -1,5 +1,5 @@
 """MobileNetV2分类模型封装模块"""
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Tuple
 
 import torch
 import torch.nn as nn

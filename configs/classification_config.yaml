@@ -1,0 +1,48 @@
+# ==============================================
+# 图片分类训练配置 (MobileNetV2)
+# ==============================================
+
+# 任务类型
+task_type: classification
+
+# 任务配置
+num_classes: 3
+class_names:
+  - freshapples
+  - rottenapples
+  - unripeapples
+
+# 数据配置
+data_path: "../data/apple_dataset"
+dataset_type: folder
+
+# 模型配置
+model_name: mobilenet_v2
+pretrained: True
+input_size: 224
+
+# 训练参数
+epochs: 50
+batch_size: 32
+learning_rate: 0.001
+weight_decay: 0.0001
+optimizer: adam
+scheduler: cosine
+seed: 42
+
+# 数据增强
+augmentation:
+  horizontal_flip: True
+  vertical_flip: False
+  rotation: 15
+  brightness: 0.2
+  contrast: 0.2
+
+# 设备配置
+device: cuda
+workers: 8
+
+# 实验配置
+project: ./experiments
+name: classification_train
+exist_ok: True

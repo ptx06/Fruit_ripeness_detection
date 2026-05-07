@@ -115,36 +115,23 @@ data/apple_dataset/
     └── ...
 ```
 
-### 3. 配置训练参数
+### 3. 选择配置文件
 
-编辑 `configs/train_config.yaml`:
+项目提供了两个独立的配置文件：
 
-```yaml
-# 选择任务类型: detection 或 classification
-task_type: detection
-
-# 目标检测配置
-data: ./data/Fruit_object_detection/data.yaml
-model: ./src/models/yolo11n.pt
-epochs: 50
-batch: 16
-imgsz: 640
-
-# 图片分类配置（取消注释启用）
-# task_type: classification
-# data_path: "../data/apple_dataset"
-# num_classes: 3
-# class_names:
-#   - freshapples
-#   - rottenapples
-#   - unripeapples
-```
+| 配置文件 | 任务类型 | 模型 |
+|---------|---------|------|
+| `configs/detection_config.yaml` | 目标检测 | YOLO11 |
+| `configs/classification_config.yaml` | 图片分类 | MobileNetV2 |
 
 ### 4. 训练模型
 
 ```bash
-# 启动训练
-python scripts/train.py --config configs/train_config.yaml
+# 训练目标检测模型
+python scripts/train.py --config configs/detection_config.yaml
+
+# 训练图片分类模型
+python scripts/train.py --config configs/classification_config.yaml
 ```
 
 ### 5. 评估模型
@@ -152,13 +139,13 @@ python scripts/train.py --config configs/train_config.yaml
 ```bash
 # 评估目标检测模型
 python scripts/evaluate.py \
-  --config configs/train_config.yaml \
-  --weights experiments/train/weights/best.pt
+  --config configs/detection_config.yaml \
+  --weights experiments/detection_train/weights/best.pt
 
 # 评估分类模型
 python scripts/evaluate.py \
-  --config configs/train_config.yaml \
-  --weights experiments/train/best_model.pth \
+  --config configs/classification_config.yaml \
+  --weights experiments/classification_train/best_model.pth \
   --split val
 ```
 
@@ -167,13 +154,15 @@ python scripts/evaluate.py \
 ```bash
 # 目标检测预测
 python scripts/predict.py \
-  --weights experiments/train/weights/best.pt \
+  --config configs/detection_config.yaml \
+  --weights experiments/detection_train/weights/best.pt \
   --image test.jpg \
   --conf 0.25
 
 # 分类预测
 python scripts/predict.py \
-  --weights experiments/train/best_model.pth \
+  --config configs/classification_config.yaml \
+  --weights experiments/classification_train/best_model.pth \
   --image test.jpg
 ```
 
@@ -238,20 +227,18 @@ experiments/train/
 
 ### 从目标检测切换到图片分类
 
-1. 修改 `configs/train_config.yaml`:
+1. 直接使用分类配置文件:
+```bash
+python scripts/train.py --config configs/classification_config.yaml
+```
+
+2. 如果需要修改分类参数，编辑 `configs/classification_config.yaml`:
 ```yaml
-task_type: classification
-data_path: "../data/apple_dataset"
 num_classes: 3
 class_names:
   - freshapples
   - rottenapples
   - unripeapples
-```
-
-2. 运行训练:
-```bash
-python scripts/train.py --config configs/train_config.yaml
 ```
 
 ## 🧠 支持的模型

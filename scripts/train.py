@@ -21,7 +21,7 @@ def main():
     parser.add_argument(
         '--config', 
         type=str, 
-        default='configs/train_config.yaml',
+        default='configs/classification_config.yaml',
         help='Path to training config file'
     )
     args = parser.parse_args()

@@ -1,0 +1,33 @@
+# ==============================================
+# 目标检测训练配置 (YOLO11)
+# ==============================================
+
+# 任务类型
+task_type: detection
+
+# 数据配置
+data: ./data/Fruit_object_detection/data.yaml
+
+# 模型配置
+model: ./src/models/yolo11n.pt
+pretrained: True
+
+# 训练参数
+epochs: 50
+imgsz: 640
+batch: 16
+device: 0
+workers: 8
+optimizer: auto
+seed: 42
+
+# 实验配置
+project: ./experiments
+name: detection_train
+exist_ok: True
+
+# 训练超参数（可选）
+# lr0: 0.01
+# lrf: 0.01
+# momentum: 0.937
+# weight_decay: 0.0005
