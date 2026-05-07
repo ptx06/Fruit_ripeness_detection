@@ -1,273 +1,355 @@
-# 🍎 水果成熟度检测系统
+# 🚀 计算机视觉万能训练模板
 
-基于YOLO11深度学习模型的水果成熟度智能检测系统，提供现代化的Web界面和完整的API服务。
+一个**同时支持目标检测和图片分类**的通用计算机视觉训练框架，基于 YOLO11 和 MobileNetV2 模型，支持灵活的配置和扩展。
 
-## ✨ 系统特性
+## ✨ 核心特性
 
-- **智能检测**: 基于YOLO11深度学习模型，准确识别水果成熟度
-- **现代化界面**: React + TypeScript + Tailwind CSS 前端界面
-- **RESTful API**: FastAPI 提供完整的后端服务
-- **用户管理**: 支持用户注册、登录、检测历史记录
-- **实时检测**: 支持图片上传和实时检测结果展示
-- **数据统计**: 检测历史统计和可视化
-- **易于部署**: 一键启动脚本，支持Windows/Linux/macOS
+- **双任务支持**: 同一框架同时支持目标检测(YOLO11)和图片分类(MobileNetV2)
+- **一键切换**: 通过配置文件轻松切换任务类型
+- **模块化设计**: 清晰的代码结构，易于扩展和维护
+- **配置驱动**: 所有参数通过 YAML 配置文件管理，无需修改代码
+- **实验可追溯**: 自动保存训练配置、权重和结果
+- **跨平台**: 支持 Windows/Linux/macOS
 
-## 🏗️ 系统架构
+## 🏗️ 项目结构
 
 ```
-水果成熟度检测系统
-├── 📁 backend/          # 后端服务 (FastAPI)
-│   ├── main.py          # 主应用入口
-│   ├── models.py        # 数据模型
-│   ├── database.py      # 数据库配置
-│   ├── auth.py          # 认证模块
-│   ├── detection_service.py  # 检测服务
-│   └── requirements.txt # Python依赖
-├── 📁 frontend/         # 前端应用 (React)
-│   ├── src/
-│   │   ├── components/  # React组件
-│   │   ├── pages/       # 页面组件
-│   │   ├── services/    # API服务
-│   │   └── contexts/    # React上下文
-│   ├── package.json     # Node.js依赖
-│   └── vite.config.js   # Vite配置
-├── 📁 data/             # 数据集目录
-├── 📁 configs/          # 配置文件
-├── 📁 experiments/      # 实验记录
-├── start_system.py      # 完整系统启动脚本
-├── start_backend.py     # 后端启动脚本
-├── start_frontend.py    # 前端启动脚本
-└── README.md           # 说明文档
+Fruit_ripeness_detection/
+├── 📁 configs/                # 配置文件目录
+│   └── train_config.yaml      # 训练配置（任务类型、参数等）
+├── 📁 data/                   # 数据集目录
+│   ├── Fruit_object_detection/ # 目标检测数据集（YOLO格式）
+│   │   ├── images/            # 图片文件夹
+│   │   │   ├── train/
+│   │   │   └── val/
+│   │   ├── labels/            # 标签文件夹
+│   │   │   ├── train/
+│   │   │   └── val/
+│   │   └── data.yaml          # 数据集配置文件
+│   └── apple_dataset/         # 图片分类数据集（按文件夹组织）
+│       ├── train/
+│       │   ├── class1/
+│       │   ├── class2/
+│       │   └── class3/
+│       ├── val/
+│       └── test/
+├── 📁 scripts/                # 运行脚本
+│   ├── train.py               # 训练脚本
+│   ├── evaluate.py            # 评估脚本
+│   └── predict.py             # 预测脚本
+├── 📁 src/                    # 源代码目录
+│   └── fruit_detection/       # 核心模块
+│       ├── data/              # 数据集处理
+│       │   ├── __init__.py
+│       │   └── dataset.py     # 数据集类（检测+分类）
+│       ├── models/            # 模型封装
+│       │   ├── __init__.py
+│       │   ├── yolo_wrapper.py      # YOLO11目标检测模型
+│       │   └── mobilenet_wrapper.py # MobileNetV2分类模型
+│       ├── training/           # 训练器
+│       │   ├── __init__.py
+│       │   └── trainer.py      # 训练器类（检测+分类）
+│       └── utils/             # 工具函数
+│           ├── __init__.py
+│           └── config.py       # 配置管理
+├── 📁 experiments/            # 实验结果目录
+│   └── outputs/               # 训练输出（权重、日志、图表）
+├── 📁 src/models/             # 预训练模型权重
+├── .gitignore                 # Git忽略配置
+├── requirements.txt           # Python依赖列表
+└── README.md                  # 项目说明文档
 ```
 
 ## 🚀 快速开始
 
-### 方式一：一键启动（推荐）
+### 1. 环境准备
 
 ```bash
-# 克隆或下载项目后，在项目根目录执行：
-python start_system.py
+# 安装依赖
+pip install -r requirements.txt
 ```
 
-系统将自动：
-- 检查环境依赖
-- 安装必要的Python包和Node.js依赖
-- 启动后端服务 (端口8000)
-- 启动前端服务 (端口3000)
-- 自动打开浏览器访问系统
+### 2. 准备数据集
 
-### 方式二：分别启动
+#### 目标检测数据集（YOLO格式）
+```
+data/Fruit_object_detection/
+├── images/
+│   ├── train/
+│   │   ├── img1.jpg
+│   │   └── img2.jpg
+│   └── val/
+│       └── ...
+├── labels/
+│   ├── train/
+│   │   ├── img1.txt
+│   │   └── img2.txt
+│   └── val/
+│       └── ...
+└── data.yaml
+```
 
-#### 启动后端服务
+**data.yaml 格式**:
+```yaml
+path: ./data/Fruit_object_detection
+train: images/train
+val: images/val
+names:
+  0: apple
+  1: banana
+  2: orange
+```
+
+#### 图片分类数据集（按文件夹组织）
+```
+data/apple_dataset/
+├── train/
+│   ├── freshapples/
+│   │   ├── img1.jpg
+│   │   └── img2.jpg
+│   ├── rottenapples/
+│   └── unripeapples/
+├── val/
+│   └── ...
+└── test/
+    └── ...
+```
+
+### 3. 配置训练参数
+
+编辑 `configs/train_config.yaml`:
+
+```yaml
+# 选择任务类型: detection 或 classification
+task_type: detection
+
+# 目标检测配置
+data: ./data/Fruit_object_detection/data.yaml
+model: ./src/models/yolo11n.pt
+epochs: 50
+batch: 16
+imgsz: 640
+
+# 图片分类配置（取消注释启用）
+# task_type: classification
+# data_path: "../data/apple_dataset"
+# num_classes: 3
+# class_names:
+#   - freshapples
+#   - rottenapples
+#   - unripeapples
+```
+
+### 4. 训练模型
+
 ```bash
-# 终端1：启动后端
-python start_backend.py
+# 启动训练
+python scripts/train.py --config configs/train_config.yaml
 ```
 
-#### 启动前端服务
+### 5. 评估模型
+
 ```bash
-# 终端2：启动前端
-python start_frontend.py
+# 评估目标检测模型
+python scripts/evaluate.py \
+  --config configs/train_config.yaml \
+  --weights experiments/train/weights/best.pt
+
+# 评估分类模型
+python scripts/evaluate.py \
+  --config configs/train_config.yaml \
+  --weights experiments/train/best_model.pth \
+  --split val
 ```
+
+### 6. 预测
+
+```bash
+# 目标检测预测
+python scripts/predict.py \
+  --weights experiments/train/weights/best.pt \
+  --image test.jpg \
+  --conf 0.25
+
+# 分类预测
+python scripts/predict.py \
+  --weights experiments/train/best_model.pth \
+  --image test.jpg
+```
+
+## ⚙️ 配置说明
+
+### 目标检测配置
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `task_type` | 任务类型 | detection |
+| `data` | 数据集配置文件路径 | ./data/Fruit_object_detection/data.yaml |
+| `model` | 预训练模型路径 | ./src/models/yolo11n.pt |
+| `epochs` | 训练轮数 | 50 |
+| `batch` | 批次大小 | 16 |
+| `imgsz` | 输入图像尺寸 | 640 |
+| `device` | 训练设备 (0=cuda, -1=cpu) | 0 |
+| `workers` | 数据加载线程数 | 8 |
+
+### 图片分类配置
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `task_type` | 任务类型 | classification |
+| `data_path` | 数据集路径 | ../data/apple_dataset |
+| `num_classes` | 类别数量 | 3 |
+| `class_names` | 类别名称列表 | - |
+| `model_name` | 模型名称 | mobilenet_v2 |
+| `input_size` | 输入图像尺寸 | 224 |
+| `batch_size` | 批次大小 | 32 |
+| `learning_rate` | 学习率 | 0.001 |
+| `epochs` | 训练轮数 | 50 |
+| `optimizer` | 优化器 | adam |
+| `scheduler` | 学习率调度器 | cosine |
+
+### 数据增强配置（分类任务）
+
+```yaml
+augmentation:
+  horizontal_flip: True    # 水平翻转
+  vertical_flip: False     # 垂直翻转
+  rotation: 15             # 旋转角度
+  brightness: 0.2          # 亮度调整
+  contrast: 0.2            # 对比度调整
+```
+
+## 📊 实验输出
+
+训练完成后，实验结果保存在 `experiments/<name>/` 目录：
+
+```
+experiments/train/
+├── best_model.pth          # 最佳模型权重（分类）
+├── training_history.json   # 训练历史记录
+├── train_config.yaml       # 训练配置备份
+├── training.log            # 训练日志
+└── weights/                # YOLO模型权重（检测）
+    ├── best.pt
+    └── last.pt
+```
+
+## 🔄 任务切换示例
+
+### 从目标检测切换到图片分类
+
+1. 修改 `configs/train_config.yaml`:
+```yaml
+task_type: classification
+data_path: "../data/apple_dataset"
+num_classes: 3
+class_names:
+  - freshapples
+  - rottenapples
+  - unripeapples
+```
+
+2. 运行训练:
+```bash
+python scripts/train.py --config configs/train_config.yaml
+```
+
+## 🧠 支持的模型
+
+| 任务类型 | 模型 | 说明 |
+|---------|------|------|
+| 目标检测 | YOLO11n | 轻量级，速度快 |
+| 目标检测 | YOLO11m | 中等大小，精度高 |
+| 图片分类 | MobileNetV2 | 轻量级，适合移动端 |
 
 ## 📋 系统要求
 
-### 环境要求
 - **Python**: 3.8+
-- **Node.js**: 16+
-- **npm**: 8+
-
-### 硬件要求
-- **内存**: 至少4GB RAM
-- **存储**: 至少2GB可用空间
-- **GPU**: 可选（支持CUDA加速）
-
-## 🔧 安装配置
-
-### 1. 环境准备
-
-确保已安装Python和Node.js：
-
-```bash
-# 检查Python版本
-python --version
-
-# 检查Node.js版本
-node --version
-
-# 检查npm版本
-npm --version
-```
-
-### 2. 手动安装依赖
-
-如果自动安装失败，可以手动安装：
-
-```bash
-# 安装Python依赖
-pip install -r backend/requirements.txt
-
-# 安装Node.js依赖
-cd frontend
-npm install
-```
-
-### 3. 模型准备
-
-系统支持两种模式：
-
-1. **预训练模式**: 使用YOLO11预训练模型（默认）
-2. **自定义训练**: 将训练好的模型保存为 `best.pt` 放在项目根目录
-
-## 🎯 使用指南
-
-### 1. 系统登录
-- 访问 http://localhost:3000
-- 使用演示账号：**demo / demo**
-
-### 2. 水果检测
-1. 点击"选择水果图片"按钮
-2. 上传包含水果的图片
-3. 点击"开始检测"按钮
-4. 查看检测结果和成熟度分析
-
-### 3. 查看历史
-- 在"检测历史"页面查看所有检测记录
-- 查看统计信息和检测趋势
-
-### 4. API使用
-后端API文档：http://localhost:8000/docs
-
-## 🔌 API接口
-
-### 主要端点
-
-| 方法 | 端点 | 描述 |
-|------|------|------|
-| POST | `/api/detect` | 水果检测 |
-| GET | `/api/history` | 获取检测历史 |
-| GET | `/api/stats` | 获取统计信息 |
-| POST | `/api/auth/login` | 用户登录 |
-
-### 检测请求示例
-
-```bash
-curl -X POST "http://localhost:8000/api/detect" \
-  -H "Authorization: Bearer <token>" \
-  -F "file=@fruit.jpg"
-```
-
-## 🎨 界面预览
-
-### 主界面
-- 图片上传区域
-- 实时检测结果显示
-- 检测历史统计
-
-### 检测结果
-- 边界框标注
-- 成熟度分类（新鲜/成熟/腐烂）
-- 置信度显示
-- 检测时间记录
+- **PyTorch**: 2.0+
+- **torchvision**: 0.15+
+- **ultralytics**: 8.0+ (YOLO11)
+- **CUDA**: 可选（GPU加速）
 
 ## 🔧 开发指南
 
-### 后端开发
+### 添加新模型
+
+在 `src/fruit_detection/models/` 目录下创建新的模型封装类：
 
 ```python
-# 添加新的API端点
-@app.post("/api/custom")
-async def custom_endpoint():
-    return {"message": "自定义端点"}
+class CustomModel:
+    def __init__(self, num_classes, pretrained=True):
+        self.model = self._build_model()
+    
+    def _build_model(self):
+        # 构建模型逻辑
+        pass
+    
+    def train(self, train_loader, val_loader, epochs):
+        # 训练逻辑
+        pass
+    
+    def predict(self, image):
+        # 预测逻辑
+        pass
 ```
 
-### 前端开发
+### 添加新数据集格式
 
-```javascript
-// 添加新的React组件
-function NewComponent() {
-    return <div>新组件</div>
-}
+在 `src/fruit_detection/data/dataset.py` 中添加新的数据集类：
+
+```python
+class CustomDataset(Dataset):
+    def __init__(self, data_dir, transform=None):
+        # 初始化逻辑
+        pass
+    
+    def __getitem__(self, idx):
+        # 获取样本逻辑
+        pass
 ```
-
-### 模型训练
-
-1. 准备YOLO格式的数据集
-2. 配置训练参数
-3. 运行训练脚本
-4. 导出训练好的模型
 
 ## 🐛 故障排除
 
 ### 常见问题
 
-**Q: 启动脚本报错**
-A: 检查Python和Node.js版本，确保满足要求
+**Q: 数据集路径错误**
+A: 检查配置文件中的 `data` 或 `data_path` 参数是否正确
 
-**Q: 前端无法访问**
-A: 检查端口3000是否被占用，或手动访问 http://localhost:3000
+**Q: CUDA 内存不足**
+A: 减小 `batch` 或 `batch_size` 参数，或使用 CPU 训练 (`device: -1`)
 
-**Q: 检测失败**
-A: 检查图片格式，确保上传的是有效图片文件
+**Q: 模型加载失败**
+A: 确保预训练模型文件存在，或使用官方模型名称（如 `yolo11n.pt`）
 
-**Q: 内存不足**
-A: 减小批量大小或使用更小的模型
-
-### 日志查看
-
-```bash
-# 查看后端日志
-python start_backend.py
-
-# 查看前端日志  
-cd frontend && npm run dev
-```
-
-## 📈 性能优化
-
-### 模型优化
-- 使用量化模型减小内存占用
-- 启用GPU加速提高检测速度
-- 优化图像预处理流程
-
-### 系统优化
-- 启用缓存机制
-- 优化数据库查询
-- 使用CDN加速静态资源
+**Q: 分类数据集找不到**
+A: 确保数据集按照 `train/class_name/image.jpg` 结构组织
 
 ## 🤝 贡献指南
 
-欢迎提交Issue和Pull Request！
+欢迎提交 Issue 和 Pull Request！
 
 ### 开发流程
 1. Fork 项目
 2. 创建功能分支
 3. 提交更改
-4. 创建Pull Request
+4. 创建 Pull Request
 
 ### 代码规范
-- 遵循PEP 8 (Python)
-- 使用ESLint (JavaScript)
+- 遵循 PEP 8 (Python)
 - 添加适当的注释和文档
+- 使用类型提示
 
 ## 📄 许可证
 
-本项目采用MIT许可证。详见 [LICENSE](LICENSE) 文件。
+本项目采用 MIT 许可证。
 
 ## 🙏 致谢
 
-- [Ultralytics YOLO](https://github.com/ultralytics/ultralytics) - 目标检测模型
-- [FastAPI](https://fastapi.tiangolo.com/) - 现代化Python Web框架
-- [React](https://reactjs.org/) - 用户界面库
-- [Tailwind CSS](https://tailwindcss.com/) - CSS框架
-
-## 📞 联系方式
-
-如有问题或建议，请通过以下方式联系：
-
-- 提交 [Issue](https://github.com/your-repo/issues)
-- 发送邮件: 304941600@qq.com
+- [Ultralytics YOLO11](https://github.com/ultralytics/ultralytics) - 目标检测模型
+- [PyTorch](https://pytorch.org/) - 深度学习框架
+- [torchvision](https://pytorch.org/vision/) - 计算机视觉工具库
 
 ---
 
-**🍎 享受智能水果检测的乐趣！**
+**🚀 开始你的计算机视觉训练之旅！**

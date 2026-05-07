@@ -1,53 +1,49 @@
 #!/usr/bin/env python
 """
-YOLO11 训练脚本
+计算机视觉通用训练脚本
+支持目标检测(YOLO)和图片分类(MobileNetV2)
 用法: python scripts/train.py --config configs/train_config.yaml
 """
 import argparse
-from pathlib import Path
-from ultralytics import YOLO
-import os
 import sys
-# 获取项目根目录（脚本在 scripts/ 下，根目录 = 上一级）
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-# 将根目录加入Python路径，这样就能识别 src/ 模块
-sys.path.append(ROOT_DIR)
-from src.utils.config import load_config, save_config
+from pathlib import Path
+
+# 将项目根目录添加到Python路径
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.append(str(PROJECT_ROOT))
+
+from src.fruit_detection.training import CVTrainer
+from src.fruit_detection.utils import load_config
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Train YOLO11 on fruit dataset")
-    parser.add_argument('--config', type=str, default='configs/train_config.yaml',
-                        help='Path to training config file')
+    parser = argparse.ArgumentParser(description="Computer Vision Training Script")
+    parser.add_argument(
+        '--config', 
+        type=str, 
+        default='configs/train_config.yaml',
+        help='Path to training config file'
+    )
     args = parser.parse_args()
 
     # 加载配置
+    print(f"📥 加载配置文件: {args.config}")
     config = load_config(args.config)
-    print("Loaded config:")
-    print(config)
+    
+    task_type = config.get('task_type', 'detection')
+    print(f"✅ 任务类型: {task_type}")
+    print(f"✅ 配置加载完成")
+    
+    # 创建训练器并执行训练
+    print(f"\n🚀 初始化训练器...")
+    trainer = CVTrainer(config)
+    
+    print(f"\n🔬 开始训练...")
+    exp_dir = trainer.run()
+    
+    print(f"\n🎉 训练完成!")
+    print(f"📊 实验结果保存于: {exp_dir}")
 
-    # 初始化模型（自动下载预训练权重）
-    model = YOLO(config['model'])
-
-    # 开始训练
-    results = model.train(
-        data=config['data'],
-        epochs=config['epochs'],
-        imgsz=config['imgsz'],
-        batch=config['batch'],
-        device=config['device'],
-        workers=config['workers'],
-        project=config['project'],
-        name=config['name'],
-        exist_ok=config['exist_ok'],
-        pretrained=config['pretrained'],
-        optimizer=config['optimizer'],
-        seed=config['seed'],
-    )
-
-    # 保存最终配置到实验目录（便于追溯）
-    exp_dir = Path(config['project']) / config['name']
-    save_config(config, exp_dir / 'train_config.yaml')
-    print(f"Training completed. Results saved in {exp_dir}")
 
 if __name__ == '__main__':
     main()
