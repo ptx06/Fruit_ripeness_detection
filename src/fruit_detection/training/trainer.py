@@ -136,10 +136,11 @@ class ClassificationTrainer:
         self.scheduler = None
         self.criterion = None
         self.history = None
-        self.logger = self._setup_logger()
         
         self.exp_dir = Path(config['project']) / config['name']
         self.exp_dir.mkdir(parents=True, exist_ok=True)
+        
+        self.logger = self._setup_logger()
     
     def _setup_logger(self) -> logging.Logger:
         """设置日志记录器"""
