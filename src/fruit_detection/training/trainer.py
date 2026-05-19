@@ -17,7 +17,7 @@ class DetectionTrainer:
     目标检测训练器 (YOLO)
     封装完整的训练流程，提供统一的训练接口
     """
-    
+
     def __init__(self, config: Dict[str, Any]):
         """
         初始化训练器
@@ -28,10 +28,11 @@ class DetectionTrainer:
         self.config = config
         self.model = None
         self.results = None
-        self.logger = self._setup_logger()
         
         self.exp_dir = Path(config['project']) / config['name']
         self.exp_dir.mkdir(parents=True, exist_ok=True)
+        
+        self.logger = self._setup_logger()
     
     def _setup_logger(self) -> logging.Logger:
         """设置日志记录器"""

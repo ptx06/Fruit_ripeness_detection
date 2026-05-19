@@ -13,7 +13,7 @@ class_names:
   - unripeapples
 
 # 数据配置
-data_path: "../data/apple_dataset"
+data_path: "./data/apple_dataset"
 dataset_type: folder
 
 # 模型配置
